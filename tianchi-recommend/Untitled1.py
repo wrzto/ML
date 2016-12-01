@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[7]:
+# In[ ]:
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -11,13 +11,13 @@ import numpy as np
 # %matplotlib inline
 
 
-# In[8]:
+# In[ ]:
 
 all_dataset = pd.read_csv("tianchi_fresh_comp_train_user.csv")[['user_id','item_id','behavior_type','item_category','time']]
 subset_item = pd.read_csv("tianchi_fresh_comp_train_item.csv")
 
 
-# In[9]:
+# In[ ]:
 
 ##数据清洗
 #去除不存在购买行为的用户
@@ -28,7 +28,7 @@ all_dataset = pd.merge(all_dataset,user_id_of_buy,on='user_id',how='left')
 all_dataset = all_dataset[all_dataset.flag.notnull()].drop(['flag'], axis=1)
 
 
-# In[10]:
+# In[ ]:
 
 ###去除购买能力低的，浏览/购买 < 500
 buy_counts = all_dataset[all_dataset.behavior_type==4]['user_id'].value_counts()
@@ -43,7 +43,7 @@ all_dataset = pd.merge(all_dataset,normal_user,on='user_id',how='left')
 all_dataset = all_dataset[all_dataset.flag.notnull()].drop('flag',axis=1)
 
 
-# In[11]:
+# In[ ]:
 
 ###去除在对商品子集中无购买，收藏，加购物车的用户
 subset_item_id = subset_item.item_id.drop_duplicates()
@@ -58,7 +58,7 @@ all_dataset = pd.merge(all_dataset,subset_user_id,on='user_id',how='left')
 all_dataset = all_dataset[all_dataset.flag.notnull()].drop(['flag'], axis=1)
 
 
-# In[12]:
+# In[ ]:
 
 ###去除只在双12购买商品的用户
 double_12_buy_user_id = all_dataset[(all_dataset.time <= '2014-12-12 23') & (all_dataset.time >= '2014-12-12 0') & (all_dataset.behavior_type == 4)]['user_id'].drop_duplicates()
@@ -69,12 +69,7 @@ all_dataset = pd.merge(all_dataset,only_double_12_buy_user_id,on='user_id',how='
 all_dataset = all_dataset[all_dataset.flag.isnull()].drop(['flag'], axis=1)
 
 
-# In[13]:
-
-# subset_item = pd.read_csv("tianchi_fresh_comp_train_item.csv")
-
-
-# In[14]:
+# In[ ]:
 
 #训练集数据集
 #训练集1
@@ -144,12 +139,8 @@ all_dataset_5_labelDay = all_dataset_5_labelDay[all_dataset_5_labelDay['flag'] =
 all_dataset_5_labelDay = all_dataset_5_labelDay.drop('flag', axis=1)
 
 
+
 # In[ ]:
-
-
-
-
-# In[19]:
 
 ##特征工程
 
@@ -313,7 +304,7 @@ def get_finally_feat(all_dataset_labelDay, all_dataset_part, all_dataset, train_
     time_lists.append(['2014-12-18 20','2014-12-18 16','2014-12-18 08','2014-12-18 00','2014-12-16 00','2014-12-14 00','2014-12-19 00','2014-12-18 23'])
     time_list = time_lists[train_ID]
     ##UI特征
-    X1 = get_feat_UI(all_dataset_1_labelDay, all_dataset_part, start=time_list[0], end=time_list[-1], name='b_4_h_bro_UI', flag=1)
+    X1 = get_feat_UI(all_dataset_labelDay, all_dataset_part, start=time_list[0], end=time_list[-1], name='b_4_h_bro_UI', flag=1)
     X1 = get_feat_UI(X1, all_dataset_part, start=time_list[1], end=time_list[-1], name='b_8_h_bro_UI', flag=1)
     X1 = get_feat_UI(X1, all_dataset_part, start=time_list[2], end=time_list[-1], name='b_16_h_bro_UI', flag=1)
     X1 = get_feat_UI(X1, all_dataset_part, start=time_list[3], end=time_list[-1], name='b_1_d_bro_UI', flag=1)
@@ -510,83 +501,34 @@ def get_finally_feat(all_dataset_labelDay, all_dataset_part, all_dataset, train_
     X1 = X1.drop(['all_bro_I','all_col_I','all_cart_I','all_buy_I'], axis=1)
     
     return X1
-    
 
 
-# In[200]:
+# In[ ]:
 
 X1 = get_finally_feat(all_dataset_1_labelDay,all_dataset_1,all_dataset,0)
 
 
-# In[204]:
+# In[ ]:
 
 X2 = get_finally_feat(all_dataset_2_labelDay,all_dataset_2,all_dataset,1)
 
 
-# In[205]:
+# In[ ]:
 
 X3 = get_finally_feat(all_dataset_3_labelDay,all_dataset_3,all_dataset,2)
 
 
-# In[206]:
+# In[ ]:
 
 X4 = get_finally_feat(all_dataset_4_labelDay,all_dataset_4,all_dataset,3)
 
 
-# In[194]:
+# In[ ]:
 
 X5 = get_finally_feat(all_dataset_5_labelDay,all_dataset_5,all_dataset,4)
 
 
-# In[207]:
-
-# X1.to_csv('X1.csv',index=False)
-
-
-# In[208]:
-
-# X2.to_csv('X2.csv',index=False)
-
-
-# In[209]:
-
-# X3.to_csv('X3.csv',index=False)
-
-
-# In[210]:
-
-# X4.to_csv('X4.csv',index=False)
-
-
-# In[2]:
-
-#训练集1
-X1 = pd.read_csv('X1.csv')
-
-
-# In[3]:
-
-#训练集2
-X2 = pd.read_csv('X2.csv')
-
-
-# In[4]:
-
-#训练集3
-X3 = pd.read_csv('X3.csv')
-
-
-# In[5]:
-
-#训练集4
-X4 = pd.read_csv('X4.csv')
-
-
-# In[203]:
-
-#线上测试集
-X5.info()
-
+# In[ ]:
 
 # In[257]:
 
@@ -644,13 +586,7 @@ valid_X4 = scale(X4.loc[:,'b_4_h_bro_UI':])
 train_X5 = scale(X5.loc[:,'b_4_h_bro_UI':])
 
 
-# In[265]:
-
-from sklearn.linear_model import LogisticRegression
-model = LogisticRegression()
-
-
-# In[270]:
+# In[ ]:
 
 from sklearn.ensemble import GradientBoostingClassifier
 model = GradientBoostingClassifier(min_samples_split=3,n_estimators=1000,learning_rate=0.04)
@@ -720,27 +656,7 @@ def get_accuary(X,valid_X):
 get_accuary(X4,valid_X4)
 
 
-# In[180]:
-
-
-
-
 # In[ ]:
-
-
-
-
-# In[ ]:
-
-
-
-
-# In[ ]:
-
-
-
-
-# In[307]:
 
 item_index = model.predict_proba(train_X5)[:,1].argsort()[-8000:]
 subset_item = pd.read_csv("tianchi_fresh_comp_train_item.csv")
@@ -761,6 +677,9 @@ submit_item = submit_item.drop_duplicates()
 print len(submit_item)
 
 
+
+# In[ ]:
+
 # In[320]:
 
 submit_item.to_csv("tianchi_mobile_recommendation_predict.csv", index=False)
@@ -770,11 +689,6 @@ submit_item.to_csv("tianchi_mobile_recommendation_predict.csv", index=False)
 
 from sklearn.externals import joblib
 joblib.dump(model, 'GDBT_model/GDBT.pkl')
-
-
-# In[ ]:
-
-
 
 
 # In[ ]:
